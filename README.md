@@ -1,5 +1,6 @@
 # SwayMonMan
-An easy-to-use manager for complex monitor setups in changing environments
+
+An easy-to-use manager for complex monitor setups in changing environments using swaywm
 
 ## How to use SwayMonMan
 
@@ -16,3 +17,7 @@ Just run SwayMonMan. If there is a configuration, it is applied.
 ### Make SwayMonMan a useful tool.
 
 Use Udev to run SwayMonMan on every display configuration change.
+
+## Does SwayMonMan support i3?
+
+Maybe if "i3msg" is used instead of "swaymsg".
