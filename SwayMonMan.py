@@ -3,6 +3,7 @@
 import subprocess
 import json
 import hashlib
+import os
 from pathlib import Path
 
 DEBUG = False
@@ -17,11 +18,16 @@ def list_digest(strings):
     return sha1.hexdigest()
 
 
-result = subprocess.run(['swaymsg', '-t', 'get_outputs'], stdout=subprocess.PIPE)
-outputs = json.loads(result.stdout)
+config_home = os.getenv('XDG_CONFIG_HOME', './')
+config_home = os.path.join(config_home, 'SwayMonMan')
+if not os.path.exists(config_home):
+    os.makedirs(config_home)
+
+swaymsg_outputs = subprocess.run(['swaymsg', '-t', 'get_outputs'], stdout=subprocess.PIPE)
+outputs = json.loads(swaymsg_outputs.stdout)
 monitor_serials = [monitor['serial'] for monitor in outputs]
 configuration_identifier = list_digest(monitor_serials)
-configuration_file = Path(configuration_identifier)
+configuration_file = Path(os.path.join(config_home, configuration_identifier))
 if configuration_file.is_file():
     with open(configuration_file, 'r') as read_file:
         configuration = json.load(read_file)
@@ -69,7 +75,7 @@ else:
         config.append(output_cfg)
     with open(configuration_file, "w") as data_file:
         json.dump(config, data_file, indent=4)
-    print("Empty configuration created for " + str(configuration_identifier))
+    print('Empty configuration created for ' + str(configuration_identifier + ' at ' + str(configuration_file)))
     # in case the user did things wrong: enable at least 1 output
     active_outputs = [output for output in outputs if output['active']]
     if not active_outputs:
