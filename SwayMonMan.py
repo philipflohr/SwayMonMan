@@ -22,6 +22,8 @@ config_home = os.getenv('XDG_CONFIG_HOME', './')
 config_home = os.path.join(config_home, 'SwayMonMan')
 if not os.path.exists(config_home):
     os.makedirs(config_home)
+latest_new_config_file = os.path.join(config_home, 'latest_new_configuration')
+current_config_file = os.path.join(config_home, 'current_configuration')
 
 swaymsg_outputs = subprocess.run(['swaymsg', '-t', 'get_outputs'], stdout=subprocess.PIPE)
 outputs = json.loads(swaymsg_outputs.stdout)
@@ -35,14 +37,10 @@ if configuration_file.is_file():
         for output in configuration:
             if output['active']:
                 result = subprocess.run(['swaymsg', 'output', output['name'], 'enable'], stdout=subprocess.PIPE)
-                if DEBUG:
-                    print(result.args)
                 if result.returncode != 0:
                     print("Enabling " + output['name'] + " failed.")
             else:
                 result = subprocess.run(['swaymsg', 'output', output['name'], 'disable'], stdout=subprocess.PIPE)
-                if DEBUG:
-                    print(result.args)
                 if result.returncode != 0:
                     print("Disabling " + output['name'] + " failed.")
 
@@ -54,10 +52,11 @@ if configuration_file.is_file():
                                          'scale', str(output['scale']),
                                          'pos', str(output['x_pos']), str(output['y_pos'])]
                                         , stdout=subprocess.PIPE)
-                if DEBUG:
-                    print(result.args)
                 if result.returncode != 0:
                     print("Setting configuration for " + output['name'] + " failed.")
+        if os.path.exists(current_config_file):
+            os.unlink(current_config_file)
+        os.link(configuration_file, current_config_file)
 else:
     config = []
     for output_desc in outputs:
@@ -75,6 +74,9 @@ else:
         config.append(output_cfg)
     with open(configuration_file, "w") as data_file:
         json.dump(config, data_file, indent=4)
+    if os.path.exists(latest_new_config_file):
+        os.unlink(latest_new_config_file)
+    os.link(configuration_file, latest_new_config_file)
     print('Empty configuration created for ' + str(configuration_identifier + ' at ' + str(configuration_file)))
     # in case the user did things wrong: enable at least 1 output
     active_outputs = [output for output in outputs if output['active']]
