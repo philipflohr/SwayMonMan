@@ -1,23 +1,27 @@
 # SwayMonMan
 
-An easy-to-use manager for complex monitor setups in changing environments using swaywm
+An easy-to-use manager for complex monitor setups in changing environments using sway
 
 ## How to use SwayMonMan
 
-### Create configuration
+### Install
 
-1. Connect your monitors
-2. Run SwayMonMan. This creates a configuration file for your current setup
+Install by running `make install` with root privileges (make sure /usr/local/bin is in your $PATH)
+
+### Configuration
+
+1. Connect your monitors, enable/disable as desired
+2. The configuration file for your current setup is located at $XGD_CONFIG_HOME/SwayMonMan/ (usually ~/.config/SwayMonMan/)
 3. Edit the created config file.
 
 ### Use SwayMonMan
 
-Just run SwayMonMan. If there is a configuration, it is applied.
+SwayMonMan is automatically executed on every DRM change detected by udev. 
 
-### Make SwayMonMan a useful tool.
+If you need to run it manually, just run `SwayMonMan`
 
-Use Udev to run SwayMonMan on every display configuration change.
+### Uninstall
 
-## Does SwayMonMan support i3?
+Before you uninstall SwayMonMan, consider opening an issue or provide a patch;)
 
-Maybe if "i3msg" is used instead of "swaymsg".
+If you really want to get rid of SwayMonMan, run `make uninstal` with root privileges.
