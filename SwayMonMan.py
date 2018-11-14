@@ -27,7 +27,7 @@ current_config_file = os.path.join(config_home, 'current_configuration')
 
 swaymsg_outputs = subprocess.run(['swaymsg', '-t', 'get_outputs'], stdout=subprocess.PIPE)
 outputs = json.loads(swaymsg_outputs.stdout)
-monitor_serials = [monitor['serial'] for monitor in outputs]
+monitor_serials = [monitor['serial'] for monitor in outputs if monitor['active']]
 configuration_identifier = list_digest(monitor_serials)
 configuration_file = Path(os.path.join(config_home, configuration_identifier))
 if configuration_file.is_file():
